@@ -1,3 +1,6 @@
+using System.Net.Http.Headers;
+using LogAnalyzer.Clients;
+
 namespace LogAnalyzer;
 
 public class Program
@@ -12,6 +15,15 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddHttpClient<GigaChatHttpClient>(httpClient =>
+            {
+                httpClient
+                    .DefaultRequestHeaders
+                    .Accept
+                    .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(30));
 
         var app = builder.Build();
 
