@@ -38,8 +38,16 @@ public class LogAnalyzer : ControllerBase
                     lines.Add(currentLine);
             }
 
-            var logFileParser = new LogFileParser(new NLog.LogLevel[] { NLog.LogLevel.Error }, errorTime.AddMinutes(-2), errorTime.AddMinutes(2));
-
+            var logFileParser = new LogFileParser(
+                new NLog.LogLevel[]
+                {
+                    NLog.LogLevel.Error,
+                    NLog.LogLevel.Fatal
+                },
+                DateTimeOffset.MinValue,
+                DateTimeOffset.MaxValue
+            );
+            
             var parseResult = logFileParser.Parse(lines.ToArray());
 
             logFileParseResults.Add(parseResult);
@@ -59,7 +67,7 @@ public class LogAnalyzer : ControllerBase
                 + $" У меня есть логи некоторых сервисов, которые могут быть как связаны, так и не связаны между собой. "
                 + $"Логи разделены между собой символом новой строки и \"||||\". "
                 + $"Вот список логов, содержащие ошибки:\n{logsArrayString}";
-
+            
             string responseGpt = await _gigaChatHttpClient.SendChatPromptAsync(prompt);
 
             return Ok(responseGpt);
