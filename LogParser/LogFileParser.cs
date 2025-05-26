@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using LogParser.Models;
 using NLog;
+using StringUnicodeDecode;
 
 namespace LogParser;
 
@@ -112,7 +113,9 @@ public class LogFileParser
         
         return new LogItem()
         {
-            LogContent = logContent.ToString(),
+            LogContent = logContent
+                .ToString()
+                .DecodeUnicodes(),
             LogMetaData = logMetaData
         };
     }
