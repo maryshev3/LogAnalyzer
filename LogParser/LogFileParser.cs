@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using LogParser.Models;
 using NLog;
+using StringUnicodeDecode;
 
 namespace LogParser;
 
@@ -12,7 +13,7 @@ public class LogFileParser
     private readonly DateTimeOffset _start;
     private readonly DateTimeOffset _end;
     
-    private string _startLogMatch = @".*(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{4})\s\|\s(.*?)\s\|\s(.*)";
+    private string _dateTimeMatch = @"\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}[\.,]\d{3,4}";
     
     /// <summary>
     /// 
@@ -27,23 +28,34 @@ public class LogFileParser
         _end = end;
     }
 
-    private bool IsStartLog(string fileRow)
+    private bool IsLogWithDateTime(string fileRow)
     {
-        return Regex.IsMatch(fileRow, _startLogMatch);
+        return Regex.IsMatch(fileRow, _dateTimeMatch);
     }
 
     private (LogMetaData, string) GetLogMetaData(string fileRow)
     {
-        MatchCollection matches = Regex.Matches(fileRow, _startLogMatch);
+        Match match = Regex.Match(fileRow, _dateTimeMatch);
+
+        LogLevel rowLogLevel = LogLevel.Trace;
+
+        if (fileRow.Contains("Error", StringComparison.CurrentCultureIgnoreCase))
+        {
+            rowLogLevel = LogLevel.Error;
+        }
+        
+        if (fileRow.Contains("Fatal", StringComparison.CurrentCultureIgnoreCase))
+        {
+            rowLogLevel = LogLevel.Fatal;
+        }
         
         LogMetaData logMetaData = new()
         {
-            LogLevel = LogLevel.FromString(matches[0].Groups[2].Value),
-            //LogLevel = (LogLevel) Enum.Parse(typeof(LogLevel), matches[0].Groups[2].Value),
-            DateTimeOffset = DateTimeOffset.Parse(matches[0].Groups[1].Value, styles: DateTimeStyles.AdjustToUniversal)
+            LogLevel = rowLogLevel,
+            DateTimeOffset = DateTimeOffset.Parse(match.Value, styles: DateTimeStyles.AdjustToUniversal)
         };
 
-        string startContent = matches[0].Groups[3].Value;
+        string startContent = fileRow;
         
         return (logMetaData, startContent);
     }
@@ -70,7 +82,7 @@ public class LogFileParser
         
         for (i = startIndex; i < fileRows.Length; i++)
         {
-            if (IsStartLog(fileRows[i]))
+            if (IsLogWithDateTime(fileRows[i]))
             {
                 if (logMetaData is null)
                 {
@@ -101,7 +113,9 @@ public class LogFileParser
         
         return new LogItem()
         {
-            LogContent = logContent.ToString(),
+            LogContent = logContent
+                .ToString()
+                .DecodeUnicodes(),
             LogMetaData = logMetaData
         };
     }
