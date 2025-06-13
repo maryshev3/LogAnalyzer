@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogAnalyzer.Api", "LogAnaly
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogParser", "LogParser\LogParser.csproj", "{C0083064-1235-4B09-A330-72C0B72E197D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogParser.Models", "LogParser.Models\LogParser.Models.csproj", "{0634A391-8BF8-4D56-B8D9-655973CC1EBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{C0083064-1235-4B09-A330-72C0B72E197D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0083064-1235-4B09-A330-72C0B72E197D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0083064-1235-4B09-A330-72C0B72E197D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0634A391-8BF8-4D56-B8D9-655973CC1EBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0634A391-8BF8-4D56-B8D9-655973CC1EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0634A391-8BF8-4D56-B8D9-655973CC1EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0634A391-8BF8-4D56-B8D9-655973CC1EBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

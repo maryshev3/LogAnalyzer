@@ -13,4 +13,8 @@
       <PackageReference Include="StringUnicodeDecode" Version="1.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\LogParser.Models\LogParser.Models.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -48,8 +48,14 @@ public class LogAnalyzer : ControllerBase
                 DateTimeOffset.MaxValue
             );
             
-            var parseResult = logFileParser.Parse(lines.ToArray());
+            var logItems = logFileParser.Parse(lines.ToArray());
 
+            var parseResult = new LogFileParseResult()
+            {
+                LogItems = logItems,
+                SourceFileName = logFile.FileName
+            };
+            
             logFileParseResults.Add(parseResult);
         }
 
@@ -58,6 +64,8 @@ public class LogAnalyzer : ControllerBase
             .Select(x => x.LogContent)
             .ToArray();
 
+        string responseGpt = "Ошибок в логах не найдено.";
+        
         if (scopedLogs.Any())
         {
             string logsArrayString = String.Join("\n||||", scopedLogs);
@@ -68,11 +76,15 @@ public class LogAnalyzer : ControllerBase
                 + $"Логи разделены между собой символом новой строки и \"||||\". "
                 + $"Вот список логов, содержащие ошибки:\n{logsArrayString}";
             
-            string responseGpt = await _gigaChatHttpClient.SendChatPromptAsync(prompt);
-
-            return Ok(responseGpt);
+            responseGpt = await _gigaChatHttpClient.SendChatPromptAsync(prompt);
         }
+
+        ParseAndAnalyzeResult parseAndAnalyzeResult = new()
+        {
+            LogFileParseResult = logFileParseResults,
+            AnalyzeResult = responseGpt
+        };
         
-        return Ok();
+        return Ok(parseAndAnalyzeResult);
     }
 }

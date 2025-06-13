@@ -125,7 +125,7 @@ public class LogFileParser
     /// </summary>
     /// <param name="fileRows">Массив строк лог файла</param>
     /// <returns></returns>
-    public LogFileParseResult Parse(string[] fileRows)
+    public List<LogItem> Parse(string[] fileRows)
     {
         int endIndex = 0;
         int startIndex = 0;
@@ -148,10 +148,7 @@ public class LogFileParser
             _logLevels.Contains(x.LogMetaData.LogLevel) && x.LogMetaData.DateTimeOffset >= _start &&
             x.LogMetaData.DateTimeOffset <= _end)
             .ToList();
-        
-        return new LogFileParseResult()
-        {
-            LogItems = logItems
-        };
+
+        return logItems;
     }
 }
