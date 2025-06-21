@@ -96,6 +96,12 @@ public class GigaChatHttpClient
             }
         }
 
+        if (response.StatusCode == HttpStatusCode.RequestEntityTooLarge)
+        {
+            throw new ArgumentException("В логах содержится слишком много ошибок." +
+                " Либо сократите файл с логами, либо уменьшите количество ошибок в нем.");
+        }
+
         string content = await response.Content.ReadAsStringAsync();
 
         string responseGpt = (string)JObject.Parse(content)["choices"][0]["message"]["content"];
